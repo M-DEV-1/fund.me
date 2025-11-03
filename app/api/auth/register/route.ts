@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const validation = registerSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
-        { error: 'Validation failed', details: validation.error.errors },
+        { error: 'Validation failed', details: validation.error.issues },
         { status: 400 }
       );
     }
@@ -62,6 +62,9 @@ export async function POST(request: NextRequest) {
           email,
           passwordHash,
           role,
+        },
+        include: {
+          ngo: true,
         },
       });
     }
