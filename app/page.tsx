@@ -9,7 +9,7 @@ export default function Home() {
       <nav className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl sm:text-2xl font-bold text-blue-600">DonationHub</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-blue-600">Fund.me</h1>
             <div className="flex gap-2 sm:gap-4">
               <Link href="/auth/login">
                 <Button variant="ghost" size="sm">Login</Button>

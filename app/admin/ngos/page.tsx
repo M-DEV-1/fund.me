@@ -88,7 +88,7 @@ export default function AdminNGOsPage() {
               ) : ngos.length === 0 ? (
                 <p className="text-center py-8 text-gray-600">No NGOs registered yet</p>
               ) : (
-                <Table headers={['NGO Name', 'Contact', 'Description', 'Requests', 'Donations', 'Status', 'Action']}>
+                <Table>
                   {ngos.map((ngo) => (
                     <tr key={ngo.id}>
                       <td className="px-6 py-4 whitespace-nowrap">

@@ -36,7 +36,7 @@ export function Sidebar({ role }: SidebarProps) {
     <>
       {/* Mobile Toggle Button */}
       <button
-        className="lg:hidden fixed bottom-4 right-4 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg"
+        className="lg:hidden fixed bottom-4 right-4 z-50 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-colors"
         onClick={() => setMobileOpen(!mobileOpen)}
       >
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -47,7 +47,7 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Overlay for mobile */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-40"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -56,7 +56,7 @@ export function Sidebar({ role }: SidebarProps) {
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-40
-          w-64 bg-gray-50 border-r border-gray-200 
+          w-64 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800
           transform transition-transform duration-300 ease-in-out
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           overflow-y-auto
@@ -64,10 +64,10 @@ export function Sidebar({ role }: SidebarProps) {
       >
         <div className="p-4">
           <div className="flex items-center justify-between mb-6 lg:hidden">
-            <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Menu</h2>
             <button
               onClick={() => setMobileOpen(false)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -83,10 +83,10 @@ export function Sidebar({ role }: SidebarProps) {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white shadow-md'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800'
                   }`}
                 >
                   <span className="text-lg">{link.icon}</span>
