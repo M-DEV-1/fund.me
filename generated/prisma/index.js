@@ -212,6 +212,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -222,7 +223,7 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  DONOR\n  NGO\n  ADMIN\n}\n\nenum RequestStatus {\n  OPEN\n  FULFILLED\n  ARCHIVED\n}\n\nenum DonationStatus {\n  PENDING\n  RECEIVED\n  VERIFIED\n  CANCELED\n}\n\nmodel User {\n  id           String     @id @default(cuid())\n  name         String\n  email        String     @unique\n  passwordHash String\n  role         Role       @default(DONOR)\n  ngo          NGO?\n  donations    Donation[]\n  createdAt    DateTime   @default(now())\n}\n\nmodel NGO {\n  id          String     @id @default(cuid())\n  name        String\n  description String?\n  verified    Boolean    @default(false)\n  userId      String     @unique\n  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)\n  requests    Request[]\n  donations   Donation[]\n  createdAt   DateTime   @default(now())\n}\n\nmodel Request {\n  id          String        @id @default(cuid())\n  ngoId       String\n  ngo         NGO           @relation(fields: [ngoId], references: [id], onDelete: Cascade)\n  itemName    String\n  quantity    Int\n  unit        String\n  description String?\n  status      RequestStatus @default(OPEN)\n  donations   Donation[]\n  createdAt   DateTime      @default(now())\n}\n\nmodel Donation {\n  id           String         @id @default(cuid())\n  donorId      String\n  donor        User           @relation(fields: [donorId], references: [id], onDelete: Cascade)\n  ngoId        String\n  ngo          NGO            @relation(fields: [ngoId], references: [id], onDelete: Cascade)\n  requestId    String?\n  request      Request?       @relation(fields: [requestId], references: [id], onDelete: SetNull)\n  donationType String\n  quantity     Int?\n  notes        String?\n  status       DonationStatus @default(PENDING)\n  createdAt    DateTime       @default(now())\n}\n",
   "inlineSchemaHash": "fe9afd5c66b6195f5ff13ee173d1293ff4db3492babb1dd4d781e5f759e08538",
-  "copyEngine": false
+  "copyEngine": true
 }
 
 const fs = require('fs')
@@ -259,3 +260,9 @@ const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
+path.join(process.cwd(), "generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node")
+// file annotations for bundling tools to include these files
+path.join(__dirname, "schema.prisma");
+path.join(process.cwd(), "generated/prisma/schema.prisma")

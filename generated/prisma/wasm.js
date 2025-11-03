@@ -211,6 +211,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -221,13 +222,20 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  DONOR\n  NGO\n  ADMIN\n}\n\nenum RequestStatus {\n  OPEN\n  FULFILLED\n  ARCHIVED\n}\n\nenum DonationStatus {\n  PENDING\n  RECEIVED\n  VERIFIED\n  CANCELED\n}\n\nmodel User {\n  id           String     @id @default(cuid())\n  name         String\n  email        String     @unique\n  passwordHash String\n  role         Role       @default(DONOR)\n  ngo          NGO?\n  donations    Donation[]\n  createdAt    DateTime   @default(now())\n}\n\nmodel NGO {\n  id          String     @id @default(cuid())\n  name        String\n  description String?\n  verified    Boolean    @default(false)\n  userId      String     @unique\n  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)\n  requests    Request[]\n  donations   Donation[]\n  createdAt   DateTime   @default(now())\n}\n\nmodel Request {\n  id          String        @id @default(cuid())\n  ngoId       String\n  ngo         NGO           @relation(fields: [ngoId], references: [id], onDelete: Cascade)\n  itemName    String\n  quantity    Int\n  unit        String\n  description String?\n  status      RequestStatus @default(OPEN)\n  donations   Donation[]\n  createdAt   DateTime      @default(now())\n}\n\nmodel Donation {\n  id           String         @id @default(cuid())\n  donorId      String\n  donor        User           @relation(fields: [donorId], references: [id], onDelete: Cascade)\n  ngoId        String\n  ngo          NGO            @relation(fields: [ngoId], references: [id], onDelete: Cascade)\n  requestId    String?\n  request      Request?       @relation(fields: [requestId], references: [id], onDelete: SetNull)\n  donationType String\n  quantity     Int?\n  notes        String?\n  status       DonationStatus @default(PENDING)\n  createdAt    DateTime       @default(now())\n}\n",
   "inlineSchemaHash": "fe9afd5c66b6195f5ff13ee173d1293ff4db3492babb1dd4d781e5f759e08538",
-  "copyEngine": false
+  "copyEngine": true
 }
 config.dirname = '/'
 
 config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"ngo\",\"kind\":\"object\",\"type\":\"NGO\",\"relationName\":\"NGOToUser\"},{\"name\":\"donations\",\"kind\":\"object\",\"type\":\"Donation\",\"relationName\":\"DonationToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"NGO\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"verified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"NGOToUser\"},{\"name\":\"requests\",\"kind\":\"object\",\"type\":\"Request\",\"relationName\":\"NGOToRequest\"},{\"name\":\"donations\",\"kind\":\"object\",\"type\":\"Donation\",\"relationName\":\"DonationToNGO\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Request\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ngoId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ngo\",\"kind\":\"object\",\"type\":\"NGO\",\"relationName\":\"NGOToRequest\"},{\"name\":\"itemName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"unit\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"RequestStatus\"},{\"name\":\"donations\",\"kind\":\"object\",\"type\":\"Donation\",\"relationName\":\"DonationToRequest\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Donation\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"donorId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"donor\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"DonationToUser\"},{\"name\":\"ngoId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ngo\",\"kind\":\"object\",\"type\":\"NGO\",\"relationName\":\"DonationToNGO\"},{\"name\":\"requestId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"request\",\"kind\":\"object\",\"type\":\"Request\",\"relationName\":\"DonationToRequest\"},{\"name\":\"donationType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"notes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"DonationStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
-config.engineWasm = undefined
+config.engineWasm = {
+  getRuntime: async () => require('./query_engine_bg.js'),
+  getQueryEngineWasmModule: async () => {
+    const loader = (await import('#wasm-engine-loader')).default
+    const engine = (await loader).default
+    return engine
+  }
+}
 config.compilerWasm = undefined
 
 config.injectableEdgeEnv = () => ({
