@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Card } from '@/components/ui/card';
-import { Table } from '@/components/ui/table';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Select } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Donation {
   id: string;
@@ -96,63 +96,78 @@ export default function NGODonationsPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Incoming Donations</h1>
             <p className="text-gray-600 mb-6">View and manage donations to your NGO</p>
 
-            <Card>
+            <Card className="p-0">
               {loading ? (
                 <p className="text-center py-8 text-gray-600">Loading donations...</p>
               ) : donations.length === 0 ? (
                 <p className="text-center py-8 text-gray-600">No donations yet</p>
               ) : (
-                <Table headers={['Donor', 'Type', 'Quantity', 'Status', 'Notes', 'Date', 'Action']}>
-                  {donations.map((donation) => (
-                    <tr key={donation.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{donation.donor.name}</div>
-                        <div className="text-xs text-gray-500">{donation.donor.email}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{donation.donationType}</div>
-                        {donation.request && (
-                          <div className="text-xs text-gray-500">For: {donation.request.itemName}</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {donation.quantity || 'N/A'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {getStatusBadge(donation.status)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
-                        {donation.notes || 'N/A'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {new Date(donation.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {donation.status === 'PENDING' && (
-                          <Button
-                            size="sm"
-                            onClick={() => handleStatusChange(donation.id, 'RECEIVED')}
-                            disabled={updating === donation.id}
-                          >
-                            Mark Received
-                          </Button>
-                        )}
-                        {donation.status === 'RECEIVED' && (
-                          <Button
-                            size="sm"
-                            onClick={() => handleStatusChange(donation.id, 'VERIFIED')}
-                            disabled={updating === donation.id}
-                          >
-                            Verify
-                          </Button>
-                        )}
-                        {donation.status === 'VERIFIED' && (
-                          <span className="text-sm text-green-600">✓ Verified</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </Table>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Donor</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Notes</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {donations.map((donation) => (
+                        <TableRow key={donation.id}>
+                          <TableCell>
+                            <div className="text-sm font-medium text-gray-900">{donation.donor.name}</div>
+                            <div className="text-xs text-gray-500">{donation.donor.email}</div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm text-gray-900">{donation.donationType}</div>
+                            {donation.request && (
+                              <div className="text-xs text-gray-500">For: {donation.request.itemName}</div>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {donation.quantity || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            {getStatusBadge(donation.status)}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600 max-w-xs truncate">
+                            {donation.notes || 'N/A'}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {new Date(donation.createdAt).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            {donation.status === 'PENDING' && (
+                              <Button
+                                size="sm"
+                                onClick={() => handleStatusChange(donation.id, 'RECEIVED')}
+                                disabled={updating === donation.id}
+                              >
+                                Mark Received
+                              </Button>
+                            )}
+                            {donation.status === 'RECEIVED' && (
+                              <Button
+                                size="sm"
+                                onClick={() => handleStatusChange(donation.id, 'VERIFIED')}
+                                disabled={updating === donation.id}
+                              >
+                                Verify
+                              </Button>
+                            )}
+                            {donation.status === 'VERIFIED' && (
+                              <span className="text-sm text-green-600">✓ Verified</span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </Card>
           </div>

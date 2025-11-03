@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Card } from '@/components/ui/card';
-import { Table } from '@/components/ui/table';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 
 interface Donation {
   id: string;
@@ -70,39 +70,53 @@ export default function DonorDonationsPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">My Donations</h1>
             <p className="text-gray-600 mb-6">Track the status of your donations</p>
 
-            <Card>
+            <Card className="p-0">
               {loading ? (
                 <p className="text-center py-8 text-gray-600">Loading donations...</p>
               ) : donations.length === 0 ? (
                 <p className="text-center py-8 text-gray-600">No donations yet</p>
               ) : (
-                <Table headers={['NGO', 'Type', 'Quantity', 'Status', 'Notes', 'Date']}>
-                  {donations.map((donation) => (
-                    <tr key={donation.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{donation.ngo.name}</div>
-                        {donation.request && (
-                          <div className="text-xs text-gray-500">For: {donation.request.itemName}</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {donation.donationType}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {donation.quantity || 'N/A'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {getStatusBadge(donation.status)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
-                        {donation.notes || 'N/A'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {new Date(donation.createdAt).toLocaleDateString()}
-                      </td>
-                    </tr>
-                  ))}
-                </Table>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>NGO</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Notes</TableHead>
+                        <TableHead>Date</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {donations.map((donation) => (
+                        <TableRow key={donation.id}>
+                          <TableCell>
+                            <div className="text-sm font-medium text-gray-900">{donation.ngo.name}</div>
+                            {donation.request && (
+                              <div className="text-xs text-gray-500">For: {donation.request.itemName}</div>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-900">
+                            {donation.donationType}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {donation.quantity || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            {getStatusBadge(donation.status)}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600 max-w-xs truncate">
+                            {donation.notes || 'N/A'}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {new Date(donation.createdAt).toLocaleDateString()}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </Card>
           </div>

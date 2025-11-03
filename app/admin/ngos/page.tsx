@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Card } from '@/components/ui/card';
-import { Table } from '@/components/ui/table';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 
 interface NGO {
@@ -82,62 +82,77 @@ export default function AdminNGOsPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage NGOs</h1>
             <p className="text-gray-600 mb-6">Verify and manage NGO accounts</p>
 
-            <Card>
+            <Card className="p-0">
               {loading ? (
                 <p className="text-center py-8 text-gray-600">Loading NGOs...</p>
               ) : ngos.length === 0 ? (
                 <p className="text-center py-8 text-gray-600">No NGOs registered yet</p>
               ) : (
-                <Table>
-                  {ngos.map((ngo) => (
-                    <tr key={ngo.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{ngo.name}</div>
-                        <div className="text-xs text-gray-500">
-                          Joined {new Date(ngo.createdAt).toLocaleDateString()}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{ngo.user.name}</div>
-                        <div className="text-xs text-gray-500">{ngo.user.email}</div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
-                        {ngo.description || 'No description'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
-                        {ngo._count.requests}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">
-                        {ngo._count.donations}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {ngo.verified ? (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
-                            ✓ Verified
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
-                            Pending
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Button
-                          size="sm"
-                          variant={ngo.verified ? 'danger' : 'primary'}
-                          onClick={() => handleToggleVerification(ngo.id, ngo.verified)}
-                          disabled={updating === ngo.id}
-                        >
-                          {updating === ngo.id
-                            ? 'Updating...'
-                            : ngo.verified
-                            ? 'Unverify'
-                            : 'Verify'}
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </Table>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>NGO Name</TableHead>
+                        <TableHead>Contact</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead className="text-center">Requests</TableHead>
+                        <TableHead className="text-center">Donations</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {ngos.map((ngo) => (
+                        <TableRow key={ngo.id}>
+                          <TableCell>
+                            <div className="text-sm font-medium text-gray-900">{ngo.name}</div>
+                            <div className="text-xs text-gray-500">
+                              Joined {new Date(ngo.createdAt).toLocaleDateString()}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm text-gray-900">{ngo.user.name}</div>
+                            <div className="text-xs text-gray-500">{ngo.user.email}</div>
+                          </TableCell>
+                          <TableCell className="max-w-xs truncate">
+                            {ngo.description || 'No description'}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {ngo._count.requests}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {ngo._count.donations}
+                          </TableCell>
+                          <TableCell>
+                            {ngo.verified ? (
+                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                                ✓ Verified
+                              </span>
+                            ) : (
+                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                                Pending
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              variant={ngo.verified ? 'destructive' : 'default'}
+                              onClick={() => handleToggleVerification(ngo.id, ngo.verified)}
+                              disabled={updating === ngo.id}
+                            >
+                              {updating === ngo.id
+                                ? 'Updating...'
+                                : ngo.verified
+                                ? 'Unverify'
+                                : 'Verify'}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </Card>
           </div>
