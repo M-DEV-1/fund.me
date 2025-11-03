@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Card } from '@/components/ui/Card';
-import { Table } from '@/components/ui/Table';
-import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Table } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/Dialog';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 interface Request {
   id: string;

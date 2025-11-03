@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { Textarea } from '@/components/ui/Textarea';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function RegisterPage() {
   const router = useRouter();

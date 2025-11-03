@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Card } from '@/components/ui/Card';
-import { Table } from '@/components/ui/Table';
-import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Table } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 
 interface NGO {
   id: string;

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Card } from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 
 interface Stats {
   totalDonations: number;

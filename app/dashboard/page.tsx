@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth';
 import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Card } from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 
 export default async function DashboardPage() {
