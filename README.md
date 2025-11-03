@@ -1,36 +1,172 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fund.me - Donation Management Platform
+
+A full-stack web application built with Next.js that connects donors with NGOs, enabling transparent donation management with admin oversight.
+
+## Features
+
+### For Donors
+- Browse verified NGO donation requests
+- Submit donations with tracking
+- View complete donation history
+- Track donation status (Pending → Received → Verified)
+
+### For NGOs
+- Create and manage donation requests
+- View incoming donations
+- Update donation statuses
+- Requires admin verification to post requests
+
+### For Admins
+- Verify/unverify NGO accounts
+- View all donations and requests
+- Access platform statistics and reports
+- Full oversight of platform activity
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Database:** PostgreSQL with Prisma ORM
+- **Authentication:** JWT with httpOnly cookies (jose + bcrypt)
+- **Validation:** Zod
+- **Styling:** Tailwind CSS
+- **Package Manager:** pnpm
+
+## Prerequisites
+
+- Node.js 18+ 
+- PostgreSQL database
+- pnpm
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone and Install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd se-project
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env.local` file in the root directory:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/donation_management?schema=public"
 
-## Learn More
+# JWT Secret (use a strong random string in production)
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Database Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Generate Prisma Client
+npx prisma generate
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Run migrations
+npx prisma migrate dev --name init
 
-## Deploy on Vercel
+# Seed the database with sample data
+npx prisma db seed
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 4. Run Development Server
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Demo Credentials
+
+After running the seed script, you can login with:
+
+- **Admin:** admin@example.com / admin123
+- **Donor:** donor@example.com / donor123
+- **NGO (verified):** hope@ngo.com / ngo123
+- **NGO (unverified):** green@ngo.com / ngo123
+
+## Project Structure
+
+```
+app/
+  ├── api/                  # API routes
+  │   ├── auth/            # Authentication endpoints
+  │   ├── requests/        # Request management
+  │   ├── donations/       # Donation management
+  │   └── admin/           # Admin endpoints
+  ├── auth/                # Auth pages (login/register)
+  ├── dashboard/           # Role-aware dashboard
+  ├── donor/              # Donor pages
+  ├── ngo/                # NGO pages
+  └── admin/              # Admin pages
+components/
+  ├── ui/                 # Reusable UI components
+  └── layout/             # Layout components
+lib/
+  ├── prisma.ts           # Prisma client
+  ├── auth.ts             # JWT auth functions
+  ├── cookies.ts          # Cookie management
+  ├── zod.ts              # Validation schemas
+  └── rbac.ts             # Role-based access control
+prisma/
+  ├── schema.prisma       # Database schema
+  └── seed.ts             # Seed data
+middleware.ts             # Route protection
+```
+
+## Development Commands
+
+```bash
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm start        # Start production server
+pnpm lint         # Run ESLint
+
+# Prisma commands
+npx prisma studio              # Open Prisma Studio
+npx prisma migrate dev         # Create and apply migration
+npx prisma db seed            # Seed database
+npx prisma generate           # Generate Prisma Client
+```
+
+## Testing the Application
+
+### Test Flow 1: Donor Journey
+1. Register as a Donor
+2. Browse open requests at `/donor/requests`
+3. Click "Donate" on a request
+4. Fill donation form and submit
+5. View donation in history at `/donor/donations`
+
+### Test Flow 2: NGO Journey
+1. Register as an NGO (verified=false by default)
+2. Login as Admin (admin@example.com)
+3. Go to `/admin/ngos` and verify the NGO
+4. Login as the NGO
+5. Create a request at `/ngo/requests`
+6. View incoming donations at `/ngo/donations`
+7. Update donation status (Received → Verified)
+
+### Test Flow 3: Admin Journey
+1. Login as Admin
+2. View all NGOs at `/admin/ngos`
+3. Verify/unverify NGOs
+4. View statistics at `/admin/reports`
+
+## Security Features
+
+- JWT tokens with httpOnly cookies (access: 15m, refresh: 7d)
+- Password hashing with bcrypt
+- Role-based access control (RBAC)
+- Input validation with Zod
+- Protected routes via middleware
+- Secure cookies (httpOnly, Secure in production, SameSite=Lax)
+
+## License
+
+MIT
