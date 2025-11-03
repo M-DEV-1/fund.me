@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -82,46 +83,61 @@ export default function RegisterPage() {
               </div>
             )}
 
-            <Input
-              type="text"
-              label="Full Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="John Doe"
-              required
-              disabled={loading}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="John Doe"
+                required
+                disabled={loading}
+              />
+            </div>
 
-            <Input
-              type="email"
-              label="Email Address"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="john@example.com"
-              required
-              disabled={loading}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="john@example.com"
+                required
+                disabled={loading}
+              />
+            </div>
 
-            <Input
-              type="password"
-              label="Password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              placeholder="••••••••"
-              required
-              disabled={loading}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                placeholder="••••••••"
+                required
+                disabled={loading}
+              />
+            </div>
 
-            <Select
-              label="Account Type"
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              options={[
-                { value: 'DONOR', label: 'Donor - Make donations' },
-                { value: 'NGO', label: 'NGO - Request donations' },
-              ]}
-              disabled={loading}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="role">Account Type</Label>
+              <Select
+                value={formData.role}
+                onValueChange={(value) => setFormData({ ...formData, role: value })}
+                disabled={loading}
+              >
+                <SelectTrigger id="role" className="w-full">
+                  <SelectValue placeholder="Select account type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DONOR">Donor - Make donations</SelectItem>
+                  <SelectItem value="NGO">NGO - Request donations</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             {isNGO && (
               <>
@@ -129,24 +145,30 @@ export default function RegisterPage() {
                   <h3 className="text-sm font-medium text-gray-700 mb-3">NGO Information</h3>
                 </div>
 
-                <Input
-                  type="text"
-                  label="NGO Name"
-                  value={formData.ngoName}
-                  onChange={(e) => setFormData({ ...formData, ngoName: e.target.value })}
-                  placeholder="Hope Foundation"
-                  required={isNGO}
-                  disabled={loading}
-                />
+                <div className="space-y-2">
+                  <Label htmlFor="ngoName">NGO Name</Label>
+                  <Input
+                    id="ngoName"
+                    type="text"
+                    value={formData.ngoName}
+                    onChange={(e) => setFormData({ ...formData, ngoName: e.target.value })}
+                    placeholder="Hope Foundation"
+                    required={isNGO}
+                    disabled={loading}
+                  />
+                </div>
 
-                <Textarea
-                  label="NGO Description"
-                  value={formData.ngoDescription}
-                  onChange={(e) => setFormData({ ...formData, ngoDescription: e.target.value })}
-                  placeholder="Brief description of your NGO and its mission..."
-                  rows={3}
-                  disabled={loading}
-                />
+                <div className="space-y-2">
+                  <Label htmlFor="ngoDescription">NGO Description</Label>
+                  <Textarea
+                    id="ngoDescription"
+                    value={formData.ngoDescription}
+                    onChange={(e) => setFormData({ ...formData, ngoDescription: e.target.value })}
+                    placeholder="Brief description of your NGO and its mission..."
+                    rows={3}
+                    disabled={loading}
+                  />
+                </div>
 
                 <div className="bg-yellow-50 border border-yellow-200 px-4 py-3 rounded text-sm text-yellow-800">
                   Note: NGO accounts require admin verification before you can create requests.

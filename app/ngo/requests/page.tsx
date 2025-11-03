@@ -3,18 +3,14 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
-// import { Card } from '@/components/ui/card';{ Table } from '@/components/ui/table';
-// import { Button } from '@/components/ui/button';
-// import { Dialog } from '@/components/ui/Dialog';
-// import { Input } from '@/components/ui/input';
-// import { Textarea } from '@/components/ui/textarea';
-// import { Select } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Dialog } from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Request {
   id: string;
@@ -173,130 +169,167 @@ export default function NGORequestsPage() {
               <Button onClick={handleCreate}>Create Request</Button>
             </div>
 
-            <Card>
+            <Card className="p-0">
               {loading ? (
                 <p className="text-center py-8 text-gray-600">Loading requests...</p>
               ) : requests.length === 0 ? (
                 <p className="text-center py-8 text-gray-600">No requests yet. Create your first one!</p>
               ) : (
-                <Table headers={['Item', 'Quantity', 'Status', 'Description', 'Date', 'Actions']}>
-                  {requests.map((request) => (
-                    <tr key={request.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {request.itemName}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {request.quantity} {request.unit}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {getStatusBadge(request.status)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
-                        {request.description || 'N/A'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {new Date(request.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                        <Button size="sm" variant="secondary" onClick={() => handleEdit(request)}>
-                          Edit
-                        </Button>
-                        <Button size="sm" variant="danger" onClick={() => handleDelete(request.id)}>
-                          Delete
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </Table>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Item</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {requests.map((request) => (
+                        <TableRow key={request.id}>
+                          <TableCell className="font-medium">
+                            {request.itemName}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {request.quantity} {request.unit}
+                          </TableCell>
+                          <TableCell>
+                            {getStatusBadge(request.status)}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600 max-w-xs truncate">
+                            {request.description || 'N/A'}
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {new Date(request.createdAt).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell className="space-x-2">
+                            <Button size="sm" variant="outline" onClick={() => handleEdit(request)}>
+                              Edit
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => handleDelete(request.id)}>
+                              Delete
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </Card>
           </div>
         </main>
       </div>
 
-      <Dialog
-        isOpen={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        title={editingRequest ? 'Edit Request' : 'Create Request'}
-      >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {message && (
-            <div
-              className={`px-4 py-3 rounded ${
-                message.includes('success')
-                  ? 'bg-green-50 text-green-700'
-                  : 'bg-red-50 text-red-700'
-              }`}
-            >
-              {message}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingRequest ? 'Edit Request' : 'Create Request'}</DialogTitle>
+            <DialogDescription>
+              {editingRequest ? 'Update the details of your donation request.' : 'Create a new donation request for donors to see.'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {message && (
+              <div
+                className={`px-4 py-3 rounded ${
+                  message.includes('success')
+                    ? 'bg-green-50 text-green-700'
+                    : 'bg-red-50 text-red-700'
+                }`}
+              >
+                {message}
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="itemName">Item Name *</Label>
+              <Input
+                id="itemName"
+                value={formData.itemName}
+                onChange={(e) => setFormData({ ...formData, itemName: e.target.value })}
+                placeholder="e.g., Rice, Blankets, Books"
+                required
+                disabled={submitting}
+              />
             </div>
-          )}
 
-          <Input
-            label="Item Name"
-            value={formData.itemName}
-            onChange={(e) => setFormData({ ...formData, itemName: e.target.value })}
-            placeholder="e.g., Rice, Blankets, Books"
-            required
-            disabled={submitting}
-          />
+            <div className="space-y-2">
+              <Label htmlFor="quantity">Quantity *</Label>
+              <Input
+                id="quantity"
+                type="number"
+                value={formData.quantity}
+                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                placeholder="How many?"
+                required
+                disabled={submitting}
+              />
+            </div>
 
-          <Input
-            type="number"
-            label="Quantity"
-            value={formData.quantity}
-            onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-            placeholder="How many?"
-            required
-            disabled={submitting}
-          />
+            <div className="space-y-2">
+              <Label htmlFor="unit">Unit *</Label>
+              <Input
+                id="unit"
+                value={formData.unit}
+                onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                placeholder="e.g., kg, pieces, liters"
+                required
+                disabled={submitting}
+              />
+            </div>
 
-          <Input
-            label="Unit"
-            value={formData.unit}
-            onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-            placeholder="e.g., kg, pieces, liters"
-            required
-            disabled={submitting}
-          />
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Additional details about this request..."
+                rows={3}
+                disabled={submitting}
+              />
+            </div>
 
-          <Textarea
-            label="Description"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            placeholder="Additional details about this request..."
-            rows={3}
-            disabled={submitting}
-          />
+            {editingRequest && (
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => setFormData({ ...formData, status: value })}
+                  disabled={submitting}
+                >
+                  <SelectTrigger id="status" className="w-full">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="OPEN">Open</SelectItem>
+                    <SelectItem value="FULFILLED">Fulfilled</SelectItem>
+                    <SelectItem value="ARCHIVED">Archived</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-          {editingRequest && (
-            <Select
-              label="Status"
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              options={[
-                { value: 'OPEN', label: 'Open' },
-                { value: 'FULFILLED', label: 'Fulfilled' },
-                { value: 'ARCHIVED', label: 'Archived' },
-              ]}
-              disabled={submitting}
-            />
-          )}
-
-          <div className="flex gap-3">
-            <Button type="submit" disabled={submitting} className="flex-1">
-              {submitting ? 'Saving...' : editingRequest ? 'Update' : 'Create'}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setDialogOpen(false)}
-              disabled={submitting}
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setDialogOpen(false)}
+                disabled={submitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? 'Saving...' : editingRequest ? 'Update' : 'Create'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
       </Dialog>
     </div>
   );

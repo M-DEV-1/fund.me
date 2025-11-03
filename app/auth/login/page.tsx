@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -58,25 +59,31 @@ export default function LoginPage() {
               </div>
             )}
 
-            <Input
-              type="email"
-              label="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="donor@example.com"
-              required
-              disabled={loading}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="donor@example.com"
+                required
+                disabled={loading}
+              />
+            </div>
 
-            <Input
-              type="password"
-              label="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              disabled={loading}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                disabled={loading}
+              />
+            </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}

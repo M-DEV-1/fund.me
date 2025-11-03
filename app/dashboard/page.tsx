@@ -75,23 +75,24 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar user={{ name: user.email.split('@')[0], role: user.role }} />
       
-      <div className="flex">
+      <div className="flex min-h-[calc(100vh-4rem)]">
         <Sidebar role={user.role} />
         
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
           <div className="max-w-6xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">{content.title}</h1>
-              <p className="text-gray-600 mt-2">{content.description}</p>
+            <div className="mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{content.title}</h1>
+              <p className="text-sm sm:text-base text-gray-600 mt-2">{content.description}</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               {content.cards.map((card, index) => (
-                <Card key={index} title={card.title}>
-                  <p className="text-gray-600 mb-4">{card.description}</p>
+                <Card key={index} className="p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-semibold mb-2">{card.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 mb-4">{card.description}</p>
                   <Link
                     href={card.link}
-                    className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center"
+                    className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center text-sm sm:text-base"
                   >
                     {card.linkText} →
                   </Link>
