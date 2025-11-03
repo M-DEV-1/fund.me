@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  DONOR
+  NGO
+  ADMIN
+}
+
+enum RequestStatus {
+  OPEN
+  FULFILLED
+  ARCHIVED
+}
+
+enum DonationStatus {
+  PENDING
+  RECEIVED
+  VERIFIED
+  CANCELED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(DONOR)
+  ngo          NGO?
+  donations    Donation[]
+  createdAt    DateTime   @default(now())
+}
+
+model NGO {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  verified    Boolean    @default(false)
+  userId      String     @unique
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requests    Request[]
+  donations   Donation[]
+  createdAt   DateTime   @default(now())
+}
+
+model Request {
+  id          String        @id @default(cuid())
+  ngoId       String
+  ngo         NGO           @relation(fields: [ngoId], references: [id], onDelete: Cascade)
+  itemName    String
+  quantity    Int
+  unit        String
+  description String?
+  status      RequestStatus @default(OPEN)
+  donations   Donation[]
+  createdAt   DateTime      @default(now())
+}
+
+model Donation {
+  id           String         @id @default(cuid())
+  donorId      String
+  donor        User           @relation(fields: [donorId], references: [id], onDelete: Cascade)
+  ngoId        String
+  ngo          NGO            @relation(fields: [ngoId], references: [id], onDelete: Cascade)
+  requestId    String?
+  request      Request?       @relation(fields: [requestId], references: [id], onDelete: SetNull)
+  donationType String
+  quantity     Int?
+  notes        String?
+  status       DonationStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+}
